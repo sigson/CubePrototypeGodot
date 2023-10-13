@@ -1,0 +1,59 @@
+[gd_scene load_steps=5 format=3 uid="uid://30qiworaxqja"]
+
+[ext_resource type="Script" path="res://GameCore/Scripts/CubeObject.cs" id="1_lqc5i"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_v6b4n"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_kjfjg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a17ig"]
+
+[node name="Cube" type="RigidBody3D" node_paths=PackedStringArray("labels")]
+script = ExtResource("1_lqc5i")
+labels = [NodePath("Labels/Label3D"), NodePath("Labels/Label3D2"), NodePath("Labels/Label3D3"), NodePath("Labels/Label3D4"), NodePath("Labels/Label3D5"), NodePath("Labels/Label3D6")]
+Value = 1000
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_v6b4n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CollisionShape3D"]
+mesh = SubResource("BoxMesh_kjfjg")
+surface_material_override/0 = SubResource("StandardMaterial3D_a17ig")
+
+[node name="Labels" type="Node3D" parent="."]
+
+[node name="Label3D" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.515287)
+text = "1024"
+font_size = 74
+outline_size = 5
+
+[node name="Label3D2" type="Label3D" parent="Labels"]
+transform = Transform3D(1.19249e-08, 0, -1, 0, 1, 0, 1, 0, 1.19249e-08, -0.515, 0, 0)
+text = "1024"
+font_size = 74
+outline_size = 5
+
+[node name="Label3D3" type="Label3D" parent="Labels"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.515, 0, 0)
+text = "1024"
+font_size = 74
+outline_size = 5
+
+[node name="Label3D4" type="Label3D" parent="Labels"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, -0.515)
+text = "1024"
+font_size = 74
+outline_size = 5
+
+[node name="Label3D5" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, 1.19249e-08, 1, 0, -1, 1.19249e-08, 0, 0.515, 0)
+text = "1024"
+font_size = 74
+outline_size = 5
+
+[node name="Label3D6" type="Label3D" parent="Labels"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.515, 0)
+text = "1024"
+font_size = 74
+outline_size = 5

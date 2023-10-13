@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3 uid="uid://bt88u6rv2wu6m"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3pee2"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ygngp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fmwtg"]
+albedo_color = Color(0.47451, 1, 1, 1)
+
+[node name="PlayDock" type="Node"]
+
+[node name="StaticObjects" type="Node3D" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="StaticObjects"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticObjects/StaticBody3D"]
+transform = Transform3D(20, 0, 0, 0, 0.2, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("BoxShape3D_3pee2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticObjects/StaticBody3D/CollisionShape3D"]
+mesh = SubResource("BoxMesh_ygngp")
+surface_material_override/0 = SubResource("StandardMaterial3D_fmwtg")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="StaticObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticObjects/StaticBody3D2"]
+transform = Transform3D(0.2, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("BoxShape3D_3pee2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticObjects/StaticBody3D2/CollisionShape3D"]
+visible = false
+mesh = SubResource("BoxMesh_ygngp")
+surface_material_override/0 = SubResource("StandardMaterial3D_fmwtg")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="StaticObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticObjects/StaticBody3D3"]
+transform = Transform3D(0.2, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("BoxShape3D_3pee2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticObjects/StaticBody3D3/CollisionShape3D"]
+visible = false
+mesh = SubResource("BoxMesh_ygngp")
+surface_material_override/0 = SubResource("StandardMaterial3D_fmwtg")
+
+[node name="StaticBody3D4" type="StaticBody3D" parent="StaticObjects"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, -10)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticObjects/StaticBody3D4"]
+transform = Transform3D(0.2, 0, 0, 0, 20, 0, 0, 0, 20, 0, 0, 0)
+shape = SubResource("BoxShape3D_3pee2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticObjects/StaticBody3D4/CollisionShape3D"]
+visible = false
+mesh = SubResource("BoxMesh_ygngp")
+surface_material_override/0 = SubResource("StandardMaterial3D_fmwtg")
+
+[node name="PlayerCubeRail" type="Node3D" parent="StaticObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 8.57508)
+
+[node name="Left" type="Node3D" parent="StaticObjects/PlayerCubeRail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+
+[node name="Right" type="Node3D" parent="StaticObjects/PlayerCubeRail"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+
+[node name="CameraBinding" type="Node3D" parent="StaticObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9421, 13.119)
