@@ -1,3 +1,31 @@
-[gd_scene format=3 uid="uid://cynfa4jl26ah1"]
+[gd_scene load_steps=5 format=3 uid="uid://cynfa4jl26ah1"]
 
-[node name="MainScene" type="Node3D"]
+[ext_resource type="Script" path="res://GameCore/Scripts/Game/Game.cs" id="1_48twq"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_3ulep"]
+turbidity = 0.0
+
+[sub_resource type="Sky" id="Sky_u5yv3"]
+sky_material = SubResource("PhysicalSkyMaterial_3ulep")
+process_mode = 3
+
+[sub_resource type="Environment" id="Environment_qjw4q"]
+background_mode = 2
+background_energy_multiplier = 5.36
+sky = SubResource("Sky_u5yv3")
+
+[node name="MainScene" type="Node3D" node_paths=PackedStringArray("DockObject", "Camera")]
+script = ExtResource("1_48twq")
+DockObject = NodePath("DockObject")
+Camera = NodePath("Camera3D")
+CubeBlockSizeX = 6.0
+CubeBlockSizeY = 5.0
+CubeBlockSizeZ = 5.0
+
+[node name="DockObject" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+environment = SubResource("Environment_qjw4q")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.795473, 0.605988, 0, -0.605988, 0.795473, 0, 1.1835, 0.681572)

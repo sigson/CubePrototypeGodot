@@ -1,4 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bt88u6rv2wu6m"]
+[gd_scene load_steps=5 format=3 uid="uid://bt88u6rv2wu6m"]
+
+[ext_resource type="Script" path="res://GameCore/Scripts/Objects/DockObject.cs" id="1_04cco"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_3pee2"]
 
@@ -7,9 +9,21 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fmwtg"]
 albedo_color = Color(0.47451, 1, 1, 1)
 
-[node name="PlayDock" type="Node"]
+[node name="PlayDock" type="Node" node_paths=PackedStringArray("RightBlock", "LeftBlock", "BackBlock", "PlayerBorderForwardLeft", "PlayerBorderForwardRight", "PlayerBorderBackgroundLeft", "PlayerBorderBackgroundRight", "PlayerCameraBinding", "CubeSpace", "Table")]
+script = ExtResource("1_04cco")
+RightBlock = NodePath("StaticObjects/StaticBody3D2")
+LeftBlock = NodePath("StaticObjects/StaticBody3D3")
+BackBlock = NodePath("StaticObjects/StaticBody3D4")
+PlayerBorderForwardLeft = NodePath("StaticObjects/PlayerCubeRail/Left")
+PlayerBorderForwardRight = NodePath("StaticObjects/PlayerCubeRail/Right")
+PlayerBorderBackgroundLeft = NodePath("StaticObjects/PlayerCubeRail2/Left")
+PlayerBorderBackgroundRight = NodePath("StaticObjects/PlayerCubeRail2/Right")
+PlayerCameraBinding = NodePath("StaticObjects/CameraBinding")
+CubeSpace = NodePath("CubeSpace")
+Table = NodePath("StaticObjects")
 
 [node name="StaticObjects" type="Node3D" parent="."]
+transform = Transform3D(0.4, 0, 0, 0, 1, 0, 0, 0, 0.6, 0, 0, 0)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="StaticObjects"]
 
@@ -66,5 +80,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
 [node name="Right" type="Node3D" parent="StaticObjects/PlayerCubeRail"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
 
+[node name="PlayerCubeRail2" type="Node3D" parent="StaticObjects"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -8.575)
+
+[node name="Left" type="Node3D" parent="StaticObjects/PlayerCubeRail2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
+
+[node name="Right" type="Node3D" parent="StaticObjects/PlayerCubeRail2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
+
 [node name="CameraBinding" type="Node3D" parent="StaticObjects"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9421, 13.119)
+
+[node name="CubeSpace" type="Node3D" parent="."]

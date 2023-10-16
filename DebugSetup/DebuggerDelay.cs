@@ -23,6 +23,7 @@ public partial class DebuggerDelay : Node
 		if(AutoRun)
 		{
             GetTree().ChangeSceneToFile(MainScene);
+            AutoRun = false;
         }
 	}
 
