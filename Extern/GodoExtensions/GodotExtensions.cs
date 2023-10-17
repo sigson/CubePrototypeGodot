@@ -21,4 +21,9 @@ public static class GodotExtensions
     {
         return new Vector3( X == null ? original.X : (float)X, Y == null ? original.Y : (float)Y, Z == null ? original.Z : (float)Z);
     }
+
+    public static Vector3 Increase(this Vector3 original, float? X = null, float? Y = null, float? Z = null)
+    {
+        return new Vector3(X == null ? original.X : original.X + (float)X, Y == null ? original.Y : original.Y + (float)Y, Z == null ? original.Z : original.Z + (float)Z);
+    }
 }

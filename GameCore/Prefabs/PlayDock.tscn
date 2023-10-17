@@ -90,6 +90,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 0)
 
 [node name="CameraBinding" type="Node3D" parent="StaticObjects"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9421, 13.119)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.93146, 13.119)
 
 [node name="CubeSpace" type="Node3D" parent="."]

@@ -12,8 +12,8 @@ public partial class CenterOfMassAuto : Node
 {
     [Export]
 	public RigidBody3D rigidBody3D;
-    [Export]
-    public Node3D marker;
+    //[Export]
+    //public Node3D marker;
 	public List<CollisionObjectProvider> collisionObjects = new List<CollisionObjectProvider>();
 
     /// <summary>
@@ -34,7 +34,7 @@ public partial class CenterOfMassAuto : Node
         #endregion
 
         CacheChilds();
-        marker.Position = marker.ToLocal(CalcCenterOfAllChilds());
+        //marker.Position = marker.ToLocal(CalcCenterOfAllChilds());
         if(rigidBody3D.CenterOfMassMode != RigidBody3D.CenterOfMassModeEnum.Auto)
         {
             rigidBody3D.CenterOfMass = rigidBody3D.ToLocal(CalcCenterOfAllChilds());

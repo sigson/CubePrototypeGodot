@@ -21,6 +21,7 @@ Camera = NodePath("Camera3D")
 CubeBlockSizeX = 6.0
 CubeBlockSizeY = 5.0
 CubeBlockSizeZ = 5.0
+ShootForce = 1000.0
 
 [node name="DockObject" type="Node3D" parent="."]
 

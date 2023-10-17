@@ -22,6 +22,7 @@ public partial class Game : Node
     [Export] public float CubeBlockSizeX = 1;
     [Export] public float CubeBlockSizeY = 1;
     [Export] public float CubeBlockSizeZ = 1;
+    [Export] public float ShootForce = 10;
 
     [Export] bool GameLoaded;
     HashSet<CubeObject> GameCubes = new HashSet<CubeObject>();
@@ -45,7 +46,16 @@ public partial class Game : Node
         cacheRightCubeBoundPositon = Dock.PlayerBorderForwardRight.GlobalPosition;
 
         ShowGame();
+        GameLoaded = true;
     }
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        GameInput();
+    }
+
+    private CubeObject ShootCube;
 
     public void ReloadGame()
     {
@@ -86,6 +96,12 @@ public partial class Game : Node
                 }
             }
         }
+
+
+        ShootCube = ResourceLoader.Load<PackedScene>("res://GameCore/Prefabs/Cube.tscn").Instantiate() as CubeObject;
+        Dock.CubeSpace.AddChild(ShootCube);
+        ShootCube.GlobalPosition = Dock.PlayerBorderForwardLeft.GlobalPosition.MoveTowardDistance(Dock.PlayerBorderForwardRight.GlobalPosition, 0.5f).Increase(null, (CubeExample.CubeShape.Size * CubeExample.CubeCollider.Scale).Y, null);
+        shootableCubePosition = ShootCube.GlobalPosition;
     }
 
     private Vector3 cacheLeftCubeBoundPositon;
@@ -97,7 +113,7 @@ public partial class Game : Node
     {
         if (!GameLoaded)
             return;
-        var ShootCube = ResourceLoader.Load<PackedScene>("res://GameCore/Prefabs/Cube.tscn").Instantiate() as CubeObject;
+        
         if (OS.GetName() == "Windows")
         {
             var pressed = Input.Singleton.IsMouseButtonPressed(MouseButton.Left);
@@ -122,14 +138,14 @@ public partial class Game : Node
                 ShootCube.GlobalPosition = shootableCubePosition;
             }
 
-            //if (!onTimeout && Input.GetMouseButtonUp(0) && ShootCube != null)
-            //{
-            //    ShootCube.GetComponent<Rigidbody>().AddForce(Vector3.forward * ShootForce);
-            //    ShootCube = null;
-            //    onTimeout = true;
-            //    pressed = false;
-            //    StartCoroutine("TimeoutWaiter");
-            //}
+            if (!onTimeout && input.GetMouseState(MouseButton.Left) == InputObjectState.Released && ShootCube != null)
+            {
+                ShootCube.ApplyImpulse(-ShootCube.Basis.Z * ShootForce);
+                ShootCube = null;
+                onTimeout = true;
+                pressed = false;
+                //StartCoroutine("TimeoutWaiter");
+            }
         }
 
         //if(OS.GetName() == "Android")

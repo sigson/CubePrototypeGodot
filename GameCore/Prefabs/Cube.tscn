@@ -1,6 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://30qiworaxqja"]
+[gd_scene load_steps=6 format=3 uid="uid://30qiworaxqja"]
 
 [ext_resource type="Script" path="res://GameCore/Scripts/Objects/CubeObject.cs" id="1_lqc5i"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_10r5u"]
+friction = 0.39
+bounce = 0.03
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_v6b4n"]
 
@@ -10,6 +14,9 @@
 albedo_color = Color(0, 0, 1, 1)
 
 [node name="Cube" type="RigidBody3D" node_paths=PackedStringArray("CubeMesh", "CubeCollider", "labels")]
+physics_material_override = SubResource("PhysicsMaterial_10r5u")
+gravity_scale = 0.7
+continuous_cd = true
 script = ExtResource("1_lqc5i")
 CubeMesh = NodePath("CollisionShape3D/MeshInstance3D")
 CubeCollider = NodePath("CollisionShape3D")
