@@ -1,4 +1,5 @@
 ﻿using Godot;
+using NECS.Extensions;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,8 +11,10 @@ using System.Threading.Tasks;
 public partial class InputEx : Node
 {
     public Vector2 MousePosition => GetViewport().GetMousePosition();
+    public Vector2[] TouchpadPositions => TouchpadPositionsCache.Values.Where(x => x.Sync).Select(x => x.Position).ToArray();
+    private IDictionary<int, TouchRecord> TouchpadPositionsCache = new OrderedDictionary<int, TouchRecord>();
     private IDictionary<Type, List<HandlerRecord>> eventHandlers = new ConcurrentDictionary<Type, List<HandlerRecord>>();
-    private IDictionary<string, int> InputMapState = new ConcurrentDictionary<string, int>();
+    private IDictionary<string, InputObjectState> InputMapState = new ConcurrentDictionary<string, InputObjectState>();
     public bool LockInput;
 
     public static InputEx Init(Node parentNode)
@@ -26,6 +29,39 @@ public partial class InputEx : Node
         base._Ready();
     }
 
+    public override void _Process(double delta)
+    {
+        foreach(var inputState in InputMapState)
+        {
+            switch(inputState.Value)
+            {
+                case InputObjectState.NoSyncEntered:
+                    InputMapState[inputState.Key] = InputObjectState.Entered;
+                    break;
+                case InputObjectState.Entered:
+                    InputMapState[inputState.Key] = InputObjectState.Pressed;
+                    break;
+                case InputObjectState.NoSyncReleased:
+                    InputMapState[inputState.Key] = InputObjectState.Released;
+                    break;
+                case InputObjectState.Released:
+                    InputMapState[inputState.Key] = InputObjectState.Quiet;
+                    break;
+            }
+        }
+        foreach(var touch in TouchpadPositionsCache)
+        {
+            if(!touch.Value.Sync)
+            {
+                touch.Value.Sync = true;
+            }
+            else
+            {
+                TouchpadPositionsCache.Remove(touch);
+            }
+        }
+    }
+
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
@@ -36,18 +72,40 @@ public partial class InputEx : Node
                 handler.Handler(@event);
             }
         }
-        if(@event.IsPressed() && !(@event is InputEventMouseMotion) && !(@event is InputEventScreenDrag))
+
+        if(@event is InputEventScreenTouch)
+        {
+            TouchpadPositionsCache[(@event as InputEventScreenTouch).Index] = new TouchRecord()
+            {
+                Position = (@event as InputEventScreenTouch).Position,
+                Sync = false
+            };
+        }
+
+        if (@event is InputEventScreenDrag)
+        {
+            TouchpadPositionsCache[(@event as InputEventScreenDrag).Index] = new TouchRecord()
+            {
+                Position = (@event as InputEventScreenDrag).Position,
+                Sync = false
+            };
+        }
+
+        if (@event.IsPressed() && !(@event is InputEventMouseMotion) && !(@event is InputEventScreenDrag))
         {
             switch (@event.GetType())
             {
                 case var type when type == typeof(InputEventKey):
-                    InputMapState[@event.GetType().ToString() + (@event as InputEventKey).Keycode.ToString()] = 0;
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventKey).Keycode.ToString()] = InputObjectState.NoSyncEntered;
                     break;
                 case var type when type == typeof(InputEventMouseButton):
-                    InputMapState[@event.GetType().ToString() + (@event as InputEventMouseButton).ButtonIndex.ToString()] = 0;
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventMouseButton).ButtonIndex.ToString()] = InputObjectState.NoSyncEntered;
+                    break;
+                case var type when type == typeof(InputEventScreenTouch):
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventScreenTouch).Index.ToString()] = InputObjectState.NoSyncEntered;
                     break;
                 default:
-                    InputMapState[@event.GetType().ToString()] = 0;
+                    InputMapState[@event.GetType().ToString()] = InputObjectState.NoSyncEntered;
                     break;
             }
         }
@@ -56,13 +114,16 @@ public partial class InputEx : Node
             switch (@event.GetType())
             {
                 case var type when type == typeof(InputEventKey):
-                    InputMapState[@event.GetType().ToString() + (@event as InputEventKey).Keycode.ToString()] = 1;
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventKey).Keycode.ToString()] = InputObjectState.NoSyncReleased;
                     break;
                 case var type when type == typeof(InputEventMouseButton):
-                    InputMapState[@event.GetType().ToString() + (@event as InputEventMouseButton).ButtonIndex.ToString()] = 1;
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventMouseButton).ButtonIndex.ToString()] = InputObjectState.NoSyncReleased;
+                    break;
+                case var type when type == typeof(InputEventScreenTouch):
+                    InputMapState[@event.GetType().ToString() + (@event as InputEventScreenTouch).Index.ToString()] = InputObjectState.NoSyncReleased;
                     break;
                 default:
-                    InputMapState[@event.GetType().ToString()] = 1;
+                    InputMapState[@event.GetType().ToString()] = InputObjectState.NoSyncReleased;
                     break;
             }
         }
@@ -111,10 +172,67 @@ public partial class InputEx : Node
     {
         eventHandlers.Clear();
     }
+#region isInputBlock
+    public InputObjectState GetKeyState(Godot.Key key)
+    {
+        if(InputMapState.TryGetValue(typeof(InputEventKey).ToString() + key.ToString(), out var lastState))
+        {
+            return NonSyncReplacer(lastState);
+        }
+        return InputObjectState.Quiet;
+    }
 
+    public InputObjectState GetMouseState(MouseButton button)
+    {
+        if (InputMapState.TryGetValue(typeof(InputEventMouseButton).ToString() + button.ToString(), out var lastState))
+        {
+            return NonSyncReplacer(lastState);
+        }
+        return InputObjectState.Quiet;
+    }
+
+    public InputObjectState GetTouchState(int index = 0)
+    {
+        if (InputMapState.TryGetValue(typeof(InputEventScreenTouch).ToString() + index.ToString(), out var lastState))
+        {
+            return NonSyncReplacer(lastState);
+        }
+        return InputObjectState.Quiet;
+    }
+
+    private InputObjectState NonSyncReplacer(InputObjectState state)
+    {
+        switch(state)
+        {
+            case InputObjectState.NoSyncEntered:
+                return InputObjectState.Quiet;
+            case InputObjectState.NoSyncReleased:
+                return InputObjectState.Pressed;
+        }
+        return state;
+    }
+    #endregion
     public struct HandlerRecord
     {
         public string Tag;
         public Action<InputEvent> Handler;
     }
+
+    public class TouchRecord
+    {
+        public bool Sync;
+        public Vector2 Position;
+    }
+}
+/// <summary>
+/// NoSync state - non stabilized state with Process iteration and commonly non usable in wild
+/// </summary>
+public enum InputObjectState
+{
+    Quiet,
+    Entered,
+    NoSyncEntered,
+    Pressed,
+    Released,
+    NoSyncReleased
 }

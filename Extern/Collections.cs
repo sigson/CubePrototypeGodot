@@ -141,7 +141,7 @@ namespace NECS.Extensions
     public class OrderedDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private List<TKey> keys = new List<TKey>();
-        private Dictionary<TKey, TValue> dictionary = new Dictionary<TKey, TValue>();
+        private IDictionary<TKey, TValue> dictionary = new ConcurrentDictionary<TKey, TValue>();
 
         private void AddImpl(TKey key, TValue value)
         {
